@@ -1,50 +1,48 @@
-# Retro Laser Portrait — iPhone/PWA Edition
+# Retro Laser Portrait — Vercel Edition
 
-This version is set up as an **installable web app for iPhone**.
+This package is ready for **GitHub → Vercel** and is designed to work on iPhone.
 
-## What you get
+## Files to upload to GitHub
 
-- Two-photo upload
-- Main portrait + faded corner-expression portrait
-- Pink/blue laser background
-- 80s blazer choices
-- Adjustable 80s intensity
-- iPhone Share Sheet support for saving/sharing the generated portrait
-- Home Screen installation with an app icon
-- Full-screen standalone appearance when launched from the Home Screen
+Upload the contents of this folder directly into the root of your GitHub repository:
 
-## The easiest way to put it on your iPhone
+- `index.html`
+- `style.css`
+- `app.js`
+- `manifest.webmanifest`
+- `sw.js`
+- icons
+- `api/generate.js`
+- `package.json`
+- `vercel.json`
 
-The app needs to be hosted on an HTTPS website because the image generation happens on a server and your OpenAI API key must stay private.
+Do not upload a `.env` file or your OpenAI API key.
 
-### Option: Render
+## Deploy on Vercel
 
-1. Put this folder in a GitHub repository.
-2. In Render, create a new **Web Service** from that repository.
-3. Render will read `render.yaml`.
-4. Add the environment variable:
-   `OPENAI_API_KEY = your OpenAI API key`
-5. Deploy.
-6. Open the resulting HTTPS address in **Safari on your iPhone**.
-7. Tap **Share** → **Add to Home Screen** → **Add**.
+1. Sign in to Vercel.
+2. Tap **Add New → Project**.
+3. Import the GitHub repository containing these files.
+4. Vercel should detect it as an **Other** project. No build command is required.
+5. Before deploying, add an Environment Variable:
+   - Name: `OPENAI_API_KEY`
+   - Value: your OpenAI API key
+6. Deploy.
 
-After that it launches from your iPhone Home Screen much like a normal app.
+When Vercel finishes, it will give you an HTTPS web address.
 
-## Local development
+## Put it on your iPhone Home Screen
 
-```bash
-npm install
-cp .env.example .env
-```
+1. Open the Vercel web address in Safari.
+2. Tap the Share button.
+3. Tap **Add to Home Screen**.
+4. Tap **Add**.
 
-Add your key to `.env` and run:
+The app can then launch from the Home Screen.
 
-```bash
-npm start
-```
+## How it works
 
-Then open `http://localhost:3000`.
-
-## Native iPhone app?
-
-This PWA version does not require the App Store. If you later want a true native iOS app distributed through TestFlight/App Store, the same concept can be rebuilt in SwiftUI with a small secure backend for the OpenAI API key.
+- Main photo: primary portrait reference
+- Corner photo: faded expression reference
+- OpenAI image generation creates the blazer, laser background, studio lighting, and double-exposure corner image
+- The OpenAI API key remains on Vercel's server side and is not exposed to the browser

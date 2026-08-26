@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#11102a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Laser Portrait" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <title>Retro Laser Portrait</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div class="badge">1988 called.</div>
+      <h1>Retro Laser Portrait</h1>
+      <p>Upload two photos. Get one gloriously over-the-top 80s school portrait.</p>
+      <div class="iphone-tip">On iPhone: open this site in Safari → Share → <strong>Add to Home Screen</strong>.</div>
+    </header>
+
+    <section class="card">
+      <form id="portraitForm">
+        <div class="upload-grid">
+          <label class="upload-card" id="mainDrop">
+            <span class="step">1</span>
+            <strong>Main portrait</strong>
+            <span class="hint">Use a clear front-facing photo.</span>
+            <input id="mainPhoto" name="mainPhoto" type="file" accept="image/jpeg,image/png,image/webp" required />
+            <img id="mainPreview" class="preview hidden" alt="Main portrait preview" />
+            <span class="choose">Choose photo</span>
+          </label>
+
+          <label class="upload-card" id="cornerDrop">
+            <span class="step">2</span>
+            <strong>Corner expression</strong>
+            <span class="hint">Pick the funny, dramatic, or excited shot.</span>
+            <input id="cornerPhoto" name="cornerPhoto" type="file" accept="image/jpeg,image/png,image/webp" required />
+            <img id="cornerPreview" class="preview hidden" alt="Corner portrait preview" />
+            <span class="choose">Choose photo</span>
+          </label>
+        </div>
+
+        <div class="controls">
+          <label>
+            Blazer
+            <select name="blazerColor">
+              <option value="dusty pink">Dusty pink</option>
+              <option value="charcoal gray">Charcoal gray</option>
+              <option value="electric blue">Electric blue</option>
+              <option value="deep purple">Deep purple</option>
+              <option value="cream white">Cream white</option>
+            </select>
+          </label>
+
+          <label>
+            Corner
+            <select name="cornerPosition">
+              <option value="upper left">Upper left</option>
+              <option value="upper right">Upper right</option>
+            </select>
+          </label>
+
+          <label>
+            80s level
+            <select name="intensity">
+              <option value="subtle">Subtle</option>
+              <option value="classic" selected>Classic</option>
+              <option value="extra">Maximum 80s</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="consent">
+          <input type="checkbox" id="consent" required />
+          <span>I have permission to use these photos and understand they will be sent to the image-generation service to create the portrait.</span>
+        </label>
+
+        <button id="generateBtn" type="submit">
+          <span class="button-text">Generate my 80s portrait</span>
+          <span class="spinner hidden" aria-hidden="true"></span>
+        </button>
+      </form>
+    </section>
+
+    <section id="resultSection" class="result-card hidden" aria-live="polite">
+      <div class="result-head">
+        <div>
+          <span class="eyebrow">Fresh from the photo lab</span>
+          <h2>Your portrait</h2>
+        </div>
+        <button id="downloadBtn" class="secondary" type="button">Save image</button>
+      </div>
+      <img id="resultImage" alt="Generated 1980s laser school portrait" />
+    </section>
+
+    <div id="status" class="status" role="status"></div>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
