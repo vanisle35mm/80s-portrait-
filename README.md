@@ -1,48 +1,47 @@
-# Retro Laser Portrait — Vercel Edition
+# Retro Laser Portrait — Vercel FIXED edition
 
-This package is ready for **GitHub → Vercel** and is designed to work on iPhone.
+This version removes the multipart upload parser that could crash inside the Vercel Function.
 
-## Files to upload to GitHub
+It now:
+- resizes both iPhone photos in the browser before upload
+- sends compact JSON to `/api/generate`
+- keeps each photo below Vercel's serverless request-size ceiling
+- asks the image API for compressed JPEG output so the generated image also stays below Vercel's response-size ceiling
+- keeps `OPENAI_API_KEY` server-side
+- uses a fresh/network-first service worker so an older broken `app.js` is less likely to remain cached
 
-Upload the contents of this folder directly into the root of your GitHub repository:
+## Replace the old GitHub files
 
-- `index.html`
-- `style.css`
-- `app.js`
-- `manifest.webmanifest`
-- `sw.js`
-- icons
+Upload the CONTENTS of this folder to the root of the same GitHub repository and overwrite the old files.
+
+Important changed files:
 - `api/generate.js`
+- `app.js`
 - `package.json`
 - `vercel.json`
+- `sw.js`
 
-Do not upload a `.env` file or your OpenAI API key.
+Then commit the changes.
 
-## Deploy on Vercel
+Vercel should automatically create a new deployment from the GitHub commit.
 
-1. Sign in to Vercel.
-2. Tap **Add New → Project**.
-3. Import the GitHub repository containing these files.
-4. Vercel should detect it as an **Other** project. No build command is required.
-5. Before deploying, add an Environment Variable:
-   - Name: `OPENAI_API_KEY`
-   - Value: your OpenAI API key
-6. Deploy.
+## Check the API key
 
-When Vercel finishes, it will give you an HTTPS web address.
+In Vercel:
+Project → Settings → Environment Variables
 
-## Put it on your iPhone Home Screen
+Make sure this exists:
 
-1. Open the Vercel web address in Safari.
-2. Tap the Share button.
-3. Tap **Add to Home Screen**.
-4. Tap **Add**.
+`OPENAI_API_KEY`
 
-The app can then launch from the Home Screen.
+It must be enabled for Production.
 
-## How it works
+After changing an environment variable, redeploy.
 
-- Main photo: primary portrait reference
-- Corner photo: faded expression reference
-- OpenAI image generation creates the blazer, laser background, studio lighting, and double-exposure corner image
-- The OpenAI API key remains on Vercel's server side and is not exposed to the browser
+## On iPhone after redeploying
+
+Open the newest Vercel deployment URL in Safari.
+
+If you had already added the old version to your Home Screen, remove that icon and add it again after the fixed deployment is live.
+
+If Safari still shows the old version, open the new deployment URL once in a Private tab or clear website data for the Vercel site.

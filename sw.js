@@ -1,4 +1,4 @@
-const CACHE = "retro-laser-v1";
+const CACHE = "retro-laser-v4";
 const SHELL = [
   "/",
   "/style.css",
@@ -24,14 +24,15 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  if (req.method !== "GET") return;
+  if (event.request.method !== "GET") return;
 
   event.respondWith(
-    caches.match(req).then((cached) => cached || fetch(req).then((response) => {
-      const copy = response.clone();
-      caches.open(CACHE).then((cache) => cache.put(req, copy));
-      return response;
-    }).catch(() => cached))
+    fetch(event.request)
+      .then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE).then((cache) => cache.put(event.request, copy));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
