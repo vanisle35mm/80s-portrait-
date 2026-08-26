@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#09081a">
+<title>80s Laser Portrait</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;padding:24px 14px 50px;
+  background:
+    radial-gradient(circle at 12% 7%,rgba(255,67,199,.18),transparent 30%),
+    radial-gradient(circle at 88% 16%,rgba(67,184,255,.18),transparent 30%),
+    #09081a;
+  color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+}
+main{max-width:700px;margin:auto}
+h1{font-size:46px;line-height:.95;letter-spacing:-2px;margin:20px 0 8px}
+.sub{color:#bbb8d0;line-height:1.4;margin:0 0 20px}
+.card{
+  background:rgba(20,18,46,.92);border:1px solid rgba(255,255,255,.11);
+  border-radius:22px;padding:14px;box-shadow:0 24px 70px rgba(0,0,0,.35)
+}
+.photo{
+  margin-bottom:14px;padding:14px;border:1px solid rgba(255,255,255,.12);
+  border-radius:16px;background:rgba(255,255,255,.04)
+}
+.photo strong{display:block;font-size:18px;margin-bottom:8px}
+.photo input[type=file]{
+  display:block;width:100%;font-size:16px;color:#fff;
+  background:#1d1a3c;border:1px solid rgba(255,255,255,.16);
+  border-radius:12px;padding:10px
+}
+.photo img{
+  display:none;width:100%;max-height:300px;object-fit:cover;
+  border-radius:12px;margin-top:12px;border:1px solid rgba(255,255,255,.10)
+}
+.photo img.show{display:block}
+.filename{font-size:12px;color:#bdb9cd;margin-top:8px;word-break:break-all}
+.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.control{font-size:11px;text-transform:uppercase;font-weight:800;color:#c7c3d5}
+select{
+  width:100%;margin-top:6px;padding:12px;border-radius:11px;
+  border:1px solid rgba(255,255,255,.12);background:#1d1a3c;color:#fff;font:inherit
+}
+.consent{display:flex;gap:9px;margin:15px 2px;color:#aaa7c0;font-size:12px;line-height:1.4}
+button{
+  width:100%;min-height:54px;border:0;border-radius:14px;color:#fff;
+  font:inherit;font-size:16px;font-weight:900;
+  background:linear-gradient(95deg,#f237bd,#6a5cff 55%,#21aef6)
+}
+button:disabled{opacity:.45}
+.status{text-align:center;min-height:20px;margin:13px 0 2px;color:#c9c6da;font-size:13px}
+.status.error{color:#ff9cab}
+#result{display:none;margin-top:16px}
+#result.show{display:block}
+#result img{width:100%;display:block;border-radius:18px}
+#share{margin-top:10px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.12)}
+@media(max-width:620px){.controls{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>80s Laser Portrait</h1>
+<p class="sub">Choose two photos. This version uses Safari's real native file controls.</p>
+
+<section class="card">
+
+  <div class="photo">
+    <strong>Main photo</strong>
+    <input id="mainPhoto" type="file" accept="image/*">
+    <div id="mainName" class="filename">No photo selected</div>
+    <img id="mainPreview" alt="Main photo preview">
+  </div>
+
+  <div class="photo">
+    <strong>Corner photo</strong>
+    <input id="cornerPhoto" type="file" accept="image/*">
+    <div id="cornerName" class="filename">No photo selected</div>
+    <img id="cornerPreview" alt="Corner photo preview">
+  </div>
+
+  <div class="controls">
+    <label class="control">Blazer
+      <select id="blazerColor">
+        <option value="dusty pink">Dusty pink</option>
+        <option value="charcoal gray">Charcoal gray</option>
+        <option value="electric blue">Electric blue</option>
+        <option value="deep purple">Deep purple</option>
+      </select>
+    </label>
+    <label class="control">Floating face
+      <select id="cornerPosition">
+        <option value="upper left">Upper left</option>
+        <option value="upper right">Upper right</option>
+      </select>
+    </label>
+    <label class="control">80s level
+      <select id="intensity">
+        <option value="classic">Classic</option>
+        <option value="extra">Maximum 80s</option>
+        <option value="subtle">Subtle</option>
+      </select>
+    </label>
+  </div>
+
+  <label class="consent">
+    <input id="consent" type="checkbox">
+    <span>I have permission to use these photos.</span>
+  </label>
+
+  <button id="generateBtn" type="button" disabled>Choose both photos first</button>
+  <div id="status" class="status"></div>
+</section>
+
+<section id="result">
+  <img id="resultImage" alt="Generated 80s portrait">
+  <button id="share" type="button">Save / Share</button>
+</section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function updateButton(){
+  const a = $("mainPhoto").files?.length > 0;
+  const b = $("cornerPhoto").files?.length > 0;
+  $("generateBtn").disabled = !(a && b);
+  $("generateBtn").textContent = a && b ? "Generate my 80s portrait" : "Choose both photos first";
+}
+
+function handlePicked(inputId, previewId, nameId){
+  const input = $(inputId);
+
+  const show = () => {
+    const file = input.files?.[0];
+    $(nameId).textContent = file ? `${file.name} — ${Math.round(file.size/1024)} KB` : "No photo selected";
+    if(!file){
+      $(previewId).classList.remove("show");
+      updateButton();
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      $(previewId).src = e.target.result;
+      $(previewId).classList.add("show");
+    };
+    reader.onerror = () => {
+      $("status").textContent = "Safari selected the photo, but could not preview it.";
+      $("status").className = "status error";
+    };
+    reader.readAsDataURL(file);
+    updateButton();
+  };
+
+  input.addEventListener("change", show);
+  input.addEventListener("input", show);
+}
+
+handlePicked("mainPhoto","mainPreview","mainName");
+handlePicked("cornerPhoto","cornerPreview","cornerName");
+
+async function loadImage(file){
+  return await new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error("This photo format could not be decoded in Safari. Try a screenshot of the photo."));
+      img.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error("Safari could not read the selected photo."));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function compress(file){
+  const img = await loadImage(file);
+  const maxSide = 1100;
+  const scale = Math.min(1, maxSide / Math.max(img.naturalWidth,img.naturalHeight));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1,Math.round(img.naturalWidth*scale));
+  canvas.height = Math.max(1,Math.round(img.naturalHeight*scale));
+
+  const ctx = canvas.getContext("2d",{alpha:false});
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(img,0,0,canvas.width,canvas.height);
+
+  return canvas.toDataURL("image/jpeg",0.68);
+}
+
+$("generateBtn").addEventListener("click", async () => {
+  const main = $("mainPhoto").files?.[0];
+  const corner = $("cornerPhoto").files?.[0];
+
+  if(!main || !corner) return;
+  if(!$("consent").checked){
+    $("status").textContent = "Tick the permission box first.";
+    $("status").className = "status error";
+    return;
+  }
+
+  const btn = $("generateBtn");
+  btn.disabled = true;
+  btn.textContent = "Preparing photos…";
+  $("status").textContent = "";
+  $("status").className = "status";
+
+  try{
+    const [mainPhoto,cornerPhoto] = await Promise.all([compress(main),compress(corner)]);
+
+    btn.textContent = "Generating…";
+    $("status").textContent = "This can take about a minute.";
+
+    const response = await fetch("/api/generate",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        mainPhoto,
+        cornerPhoto,
+        blazerColor:$("blazerColor").value,
+        cornerPosition:$("cornerPosition").value,
+        intensity:$("intensity").value
+      })
+    });
+
+    const data = await response.json().catch(()=>({}));
+    if(!response.ok) throw new Error(data.error || `Server error ${response.status}`);
+    if(!data.image) throw new Error("No image was returned.");
+
+    $("resultImage").src = data.image;
+    $("result").classList.add("show");
+    $("status").textContent = "Done.";
+    $("result").scrollIntoView({behavior:"smooth"});
+  }catch(e){
+    $("status").textContent = e.message || "Generation failed.";
+    $("status").className = "status error";
+  }finally{
+    btn.disabled = false;
+    updateButton();
+  }
+});
+
+$("share").addEventListener("click", async () => {
+  try{
+    const response = await fetch($("resultImage").src);
+    const blob = await response.blob();
+    const file = new File([blob],"80s-laser-portrait.jpg",{type:"image/jpeg"});
+
+    if(navigator.share && navigator.canShare?.({files:[file]})){
+      await navigator.share({files:[file],title:"80s Laser Portrait"});
+    }else{
+      const a = document.createElement("a");
+      a.href = $("resultImage").src;
+      a.download = "80s-laser-portrait.jpg";
+      a.click();
+    }
+  }catch{
+    alert("Press and hold the portrait to save it.");
+  }
+});
+
+if(location.search){
+  history.replaceState({}, "", location.pathname);
+}
+</script>
+</body>
+</html>
