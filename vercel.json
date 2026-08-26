@@ -4,16 +4,5 @@
     "api/generate.js": {
       "maxDuration": 300
     }
-  },
-  "headers": [
-    {
-      "source": "/(index.html|app.js|style.css|sw.js)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
-        }
-      ]
-    }
-  ]
+  }
 }
