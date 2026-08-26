@@ -1,47 +1,47 @@
-# Retro Laser Portrait — Vercel FIXED edition
+# Retro Laser Portrait — Vercel v3
 
-This version removes the multipart upload parser that could crash inside the Vercel Function.
+This version deliberately removes the OpenAI Node SDK and every npm runtime dependency from the serverless function.
 
-It now:
-- resizes both iPhone photos in the browser before upload
-- sends compact JSON to `/api/generate`
-- keeps each photo below Vercel's serverless request-size ceiling
-- asks the image API for compressed JPEG output so the generated image also stays below Vercel's response-size ceiling
-- keeps `OPENAI_API_KEY` server-side
-- uses a fresh/network-first service worker so an older broken `app.js` is less likely to remain cached
+The backend uses only native Node/Vercel features:
+- `fetch`
+- `FormData`
+- `Blob`
+- `Buffer`
 
-## Replace the old GitHub files
+This avoids package/import initialization failures inside the Vercel function.
 
-Upload the CONTENTS of this folder to the root of the same GitHub repository and overwrite the old files.
+## Deploy
 
-Important changed files:
-- `api/generate.js`
-- `app.js`
-- `package.json`
-- `vercel.json`
-- `sw.js`
+Replace the old files in the SAME GitHub repository with the contents of this ZIP and commit.
 
-Then commit the changes.
+Vercel should automatically redeploy.
 
-Vercel should automatically create a new deployment from the GitHub commit.
+## Environment variable
 
-## Check the API key
+Vercel → Project → Settings → Environment Variables
 
-In Vercel:
-Project → Settings → Environment Variables
-
-Make sure this exists:
+Confirm:
 
 `OPENAI_API_KEY`
 
-It must be enabled for Production.
+is set for Production.
 
-After changing an environment variable, redeploy.
+## Test the backend BEFORE generating
 
-## On iPhone after redeploying
+After deployment, open:
 
-Open the newest Vercel deployment URL in Safari.
+`https://YOUR-SITE.vercel.app/api/health`
 
-If you had already added the old version to your Home Screen, remove that icon and add it again after the fixed deployment is live.
+You should see JSON similar to:
 
-If Safari still shows the old version, open the new deployment URL once in a Private tab or clear website data for the Vercel site.
+`{"ok":true,"apiKeyConfigured":true,"runtime":"v22..."}`
+
+If `apiKeyConfigured` is false, the code is fine and the Vercel environment variable needs to be fixed.
+
+If `/api/health` itself shows FUNCTION_INVOCATION_FAILED, send a screenshot of the Vercel Runtime Log for that invocation.
+
+## Vercel logs
+
+Vercel → your project → Observability / Logs → Functions
+
+Open the failed `/api/generate` invocation and copy or screenshot the first red error line. That line reveals the exact remaining problem.

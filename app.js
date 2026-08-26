@@ -155,6 +155,26 @@ function setLoading(loading) {
   spinner.classList.toggle("hidden", !loading);
 }
 
+async function checkServer() {
+  try {
+    const r = await fetch("/api/health", { cache: "no-store" });
+    const info = await r.json();
+    if (!r.ok || !info.ok) throw new Error("Server health check failed.");
+
+    if (!info.apiKeyConfigured) {
+      showError("App is online, but OPENAI_API_KEY is missing in Vercel.");
+      generateBtn.disabled = true;
+      return;
+    }
+
+    statusEl.textContent = "Server ready.";
+  } catch (e) {
+    showError("The Vercel backend is not responding yet.");
+  }
+}
+
+window.addEventListener("load", checkServer);
+
 // Keep the PWA installable, but always prefer fresh app files after redeploys.
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {

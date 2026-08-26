@@ -1,4 +1,4 @@
-const CACHE = "retro-laser-v4";
+const CACHE = "retro-laser-v5";
 const SHELL = [
   "/",
   "/style.css",
