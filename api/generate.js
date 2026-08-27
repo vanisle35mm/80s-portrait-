@@ -1,102 +1,76 @@
-function dataUrlToBlob(dataUrl, label) {
-  if (typeof dataUrl !== "string") throw new Error(`${label} is missing.`);
-  const match = dataUrl.match(/^data:(image\/(?:jpeg|png|webp));base64,(.+)$/);
-  if (!match) throw new Error(`${label} is not a supported image.`);
-  const bytes = Buffer.from(match[2], "base64");
-  if (bytes.length > 1700000) {
-    const err = new Error(`${label} is too large after compression.`);
-    err.statusCode = 413;
-    throw err;
-  }
-  return new Blob([bytes], { type: match[1] });
+const prompt = `
+Create a photorealistic late-1980s school portrait using BOTH uploaded photos of the SAME person.
+
+PHOTO 1 is the main portrait reference.
+PHOTO 2 is the expression reference for the faded secondary portrait.
+
+Preserve the person's identity very closely:
+- facial structure
+- apparent age
+- skin tone
+- eye color
+- recognizable hairstyle and hair color
+- natural facial proportions
+
+The final image should look like a real professionally photographed school or department-store studio portrait from approximately 1987–1989, not a modern parody of the 1980s.
+
+MAIN PORTRAIT:
+- natural, believable school-photo pose
+- ${blazer} late-1980s blazer
+- moderate, realistic shoulder padding
+- blazer should fit naturally and should not look like a costume
+- simple light-colored shirt or blouse underneath
+- natural skin texture
+- realistic eyes, teeth, hair, and facial detail
+- subtle period-appropriate grooming
+- do not make the subject look older or younger than in the reference
+
+LIGHTING:
+- realistic soft studio key light
+- gentle fill light
+- believable catchlights in the eyes
+- natural shadows around the face and clothing
+- subtle vintage photographic softness
+- avoid excessive airbrushing, plastic skin, or artificial glow
+
+BACKGROUND:
+- authentic dark navy, indigo, and muted purple studio backdrop
+- a few soft hot-pink and electric-blue diagonal laser streaks
+- laser beams remain behind the subject and are secondary to the portrait
+- slight studio haze
+- restrained late-1980s photo-lab glow
+- no futuristic sci-fi effects
+
+SECONDARY / FLOATING PORTRAIT:
+- use PHOTO 2 for the facial expression
+- place it in the ${position}
+- smaller than the main portrait
+- head-and-shoulders framing
+- semi-transparent double-exposure appearance
+- softly feathered edges
+- lower opacity than the main portrait
+- dreamy but still photographic
+- do not let it overpower the main portrait
+
+COMPOSITION:
+- square portrait
+- professionally composed
+- main subject remains dominant
+- realistic camera perspective
+- photorealistic photography, not illustration or digital art
+- no text
+- no logos
+- no watermarks
+- no exaggerated shoulder pads
+- no exaggerated makeup
+- no caricature
+- no comedy/parody styling
+
+${
+  level === "extra"
+    ? "Increase the 1980s styling moderately: slightly brighter laser accents, a little more studio glow, and slightly stronger period styling, while keeping the result believable and photorealistic."
+    : level === "subtle"
+    ? "Keep the 1980s styling understated: very faint laser lines, minimal shoulder padding, very little haze, and a smaller secondary portrait."
+    : "Use an authentic, tasteful, believable late-1980s school-portrait aesthetic."
 }
-
-export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "POST only." });
-
-  try {
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({ error: "OPENAI_API_KEY is missing in Vercel." });
-    }
-
-    const body = req.body || {};
-    const main = dataUrlToBlob(body.mainPhoto, "Main photo");
-    const corner = dataUrlToBlob(body.cornerPhoto, "Corner photo");
-
-    const blazerColor = String(body.blazerColor || "dusty pink").slice(0, 50);
-    const cornerPosition = String(body.cornerPosition || "upper left");
-    const intensity = String(body.intensity || "classic");
-
-    const styleNotes =
-      intensity === "extra"
-        ? "Push the late-1980s glamour strongly: more neon lasers, stronger soft-focus glow, bigger shoulder pads, richer blue-purple haze."
-        : intensity === "subtle"
-        ? "Keep the late-1980s styling relatively subtle: restrained lasers, gentle soft-focus, modest shoulder pads."
-        : "Use a classic unmistakable late-1980s school-photo studio aesthetic.";
-
-    const prompt = `
-Create a polished photorealistic late-1980s school-portrait composite using BOTH uploaded photos of the SAME person.
-
-IMAGE 1 is the primary portrait reference. Preserve identity, facial structure, age, skin tone, eye color, and recognizable hair.
-IMAGE 2 is the secondary expression reference. Use it as a large dreamy translucent double-exposure portrait in the ${cornerPosition}.
-
-Main portrait:
-- ${blazerColor} oversized late-1980s blazer with padded shoulders
-- simple light top
-- age-appropriate natural styling
-- professional school portrait pose
-- no text or logos
-
-Background:
-- deep navy / indigo / purple studio backdrop
-- electric-blue and hot-pink diagonal laser beams
-- haze, airbrushed glow, vintage photo-lab softness
-
-Secondary portrait:
-- large faded head-and-shoulders image in the ${cornerPosition}
-- semi-transparent, feathered edges
-- expression from image 2
-
-Composition:
-- square
-- photorealistic
-- do not age the person up or down
-
-${styleNotes}
 `;
-
-    const form = new FormData();
-    form.append("model", "gpt-image-2");
-    form.append("prompt", prompt);
-    form.append("image[]", main, "main.jpg");
-    form.append("image[]", corner, "corner.jpg");
-    form.append("size", "1024x1024");
-    form.append("quality", "medium");
-    form.append("output_format", "jpeg");
-    form.append("output_compression", "72");
-
-    const upstream = await fetch("https://api.openai.com/v1/images/edits", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
-      body: form
-    });
-
-    const result = await upstream.json();
-
-    if (!upstream.ok) {
-      return res.status(upstream.status).json({
-        error: result?.error?.message || `OpenAI request failed (${upstream.status}).`
-      });
-    }
-
-    const b64 = result?.data?.[0]?.b64_json;
-    if (!b64) return res.status(502).json({ error: "No image data returned." });
-
-    return res.status(200).json({ image: `data:image/jpeg;base64,${b64}` });
-  } catch (error) {
-    console.error(error);
-    return res.status(error?.statusCode || 500).json({
-      error: error?.message || "Generation failed."
-    });
-  }
-}
