@@ -28,43 +28,93 @@ export default async function handler(req, res) {
     const intensity = String(body.intensity || "classic");
 
     const styleNotes =
-      intensity === "extra"
-        ? "Push the late-1980s glamour strongly: more neon lasers, stronger soft-focus glow, bigger shoulder pads, richer blue-purple haze."
-        : intensity === "subtle"
-        ? "Keep the late-1980s styling relatively subtle: restrained lasers, gentle soft-focus, modest shoulder pads."
-        : "Use a classic unmistakable late-1980s school-photo studio aesthetic.";
+  intensity === "extra"
+    ? "Increase the late-1980s styling moderately with somewhat brighter laser accents and a little more studio glow, but keep the portrait realistic and believable. Do not exaggerate the clothing, hair, makeup, or shoulder pads."
+    : intensity === "subtle"
+    ? "Keep the late-1980s styling understated with faint laser lines, minimal haze, natural clothing proportions, and a smaller softer secondary portrait."
+    : "Create an authentic, tasteful, realistic late-1980s school-photo studio portrait that looks genuinely photographed rather than like a modern retro parody.";
 
-    const prompt = `
-Create a polished photorealistic late-1980s school-portrait composite using BOTH uploaded photos of the SAME person.
+const prompt = `
+Create a highly realistic professional late-1980s school portrait using BOTH uploaded photos of the SAME person.
 
-IMAGE 1 is the primary portrait reference. Preserve identity, facial structure, age, skin tone, eye color, and recognizable hair.
-IMAGE 2 is the secondary expression reference. Use it as a large dreamy translucent double-exposure portrait in the ${cornerPosition}.
+IMAGE 1 is the PRIMARY portrait reference.
+Use IMAGE 1 to preserve the person's identity as accurately as possible, including facial structure, apparent age, skin tone, eye color, hair color, hairstyle, smile, and natural facial proportions.
+
+IMAGE 2 is the SECONDARY expression reference.
+Use IMAGE 2 only for the faded double-exposure portrait in the ${cornerPosition}. Preserve the same person's identity and use the expression from IMAGE 2.
+
+The finished photograph should look like a genuine school, department-store, or portrait-studio photograph taken around 1987-1989.
+
+It should feel nostalgic and period-correct, but NOT exaggerated, comedic, costume-like, or like a modern parody of the 1980s.
 
 Main portrait:
-- ${blazerColor} oversized late-1980s blazer with padded shoulders
-- simple light top
-- age-appropriate natural styling
-- professional school portrait pose
-- no text or logos
+- ${blazerColor} late-1980s blazer
+- realistic fit and proportions
+- mild to moderate shoulder padding appropriate to the period
+- do not make the shoulder pads oversized or cartoonish
+- simple light-colored top underneath
+- natural school-photo pose
+- age-appropriate styling
+- realistic skin texture
+- natural facial detail
+- realistic hair texture
+- realistic eyes and teeth
+- preserve recognizable facial features from IMAGE 1
+- do not make the subject look older or younger
+
+Lighting:
+- authentic professional portrait-studio lighting
+- soft key light on the face
+- gentle fill light
+- natural shadows
+- believable eye catchlights
+- subtle vintage photographic softness
+- slight film-like softness rather than digital blur
+- avoid plastic skin
+- avoid excessive airbrushing
+- avoid excessive glamour retouching
 
 Background:
-- deep navy / indigo / purple studio backdrop
-- electric-blue and hot-pink diagonal laser beams
-- haze, airbrushed glow, vintage photo-lab softness
+- authentic dark navy, indigo, and muted purple studio backdrop
+- several thin diagonal electric-blue and hot-pink laser streaks
+- laser lines should appear behind the subject
+- lasers should be clearly visible but should not dominate the photograph
+- subtle atmospheric studio haze
+- restrained vintage photo-lab glow
+- no futuristic sci-fi appearance
+- no modern neon nightclub appearance
 
 Secondary portrait:
-- large faded head-and-shoulders image in the ${cornerPosition}
-- semi-transparent, feathered edges
-- expression from image 2
+- place a faded head-and-shoulders portrait in the ${cornerPosition}
+- use IMAGE 2 for the expression
+- make it noticeably smaller and softer than the main portrait
+- semi-transparent double-exposure appearance
+- softly feathered edges that blend naturally into the background
+- subtle opacity
+- dreamy photographic effect
+- keep the main portrait visually dominant
 
 Composition:
-- square
-- photorealistic
-- do not age the person up or down
+- square portrait
+- professionally composed
+- authentic late-1980s school photography
+- realistic camera perspective
+- realistic photographic depth
+- photorealistic rather than illustrated
+- no text
+- no logos
+- no watermark
+- no caricature
+- no exaggerated makeup
+- no exaggerated shoulder pads
+- no costume appearance
+- no comedy or parody styling
+
+Most importantly, prioritize preservation of the person's recognizable identity over stylization.
 
 ${styleNotes}
-`;
 
+`;
     const form = new FormData();
     form.append("model", "gpt-image-2");
     form.append("prompt", prompt);
