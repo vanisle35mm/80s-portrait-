@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07091a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>80s School Portrait</title>
+<style>
+:root{
+  --bg:#07091a; --text:#f7f8ff; --muted:#aab0c8;
+  --pink:#ff5fbf; --blue:#4aa7ff; --violet:#9c6cff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh;
+  padding:max(16px,env(safe-area-inset-top)) 14px max(28px,env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 22% 2%,rgba(255,95,191,.18),transparent 24%),
+    radial-gradient(circle at 86% 8%,rgba(74,167,255,.18),transparent 24%),
+    linear-gradient(180deg,#07091a,#090c20 62%,#050713);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+.app{max-width:480px;margin:0 auto}
+.hero{text-align:center;padding:8px 4px 18px}
+.kicker{font-size:14px;font-weight:900;color:var(--pink);letter-spacing:.15em;text-transform:uppercase}
+h1{
+  margin:2px 0 8px;font-size:45px;line-height:.92;letter-spacing:-.04em;text-transform:uppercase;
+  background:linear-gradient(180deg,#fff,#cadcff 30%,#7d8cff 55%,#f4d6ff 80%,#fff);
+  -webkit-background-clip:text;background-clip:text;color:transparent
+}
+.hero p{margin:0;color:#c4c8da;font-size:15px}
+.card{
+  border:1px solid rgba(255,255,255,.10); border-radius:22px;
+  background:linear-gradient(180deg,rgba(20,24,52,.95),rgba(11,15,35,.97));
+  margin-bottom:14px; overflow:hidden
+}
+.photo{padding:14px}
+.photo.main{border-color:rgba(255,95,191,.25)}
+.photo.corner{border-color:rgba(74,167,255,.25)}
+.head{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.step{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:20px;font-weight:900}
+.main .step{background:linear-gradient(135deg,#ff6ebf,#c4419c)}
+.corner .step{background:linear-gradient(135deg,#4ca6ff,#4d7cff)}
+.title{flex:1}
+.title h2{margin:1px 0 5px;font-size:21px}
+.title p{margin:0;color:#b7bdd3;font-size:13px}
+.tag{display:inline-block;margin-top:8px;padding:6px 9px;border-radius:999px;font-size:10px;font-weight:900;text-transform:uppercase}
+.main .tag{background:rgba(255,95,191,.14);color:#ff8dce}
+.corner .tag{background:rgba(74,167,255,.14);color:#79bbff}
+.thumb{
+  width:70px;height:70px;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.1);
+  background:#0a0c18;display:grid;place-items:center;font-size:25px
+}
+.thumb img{width:100%;height:100%;object-fit:cover;display:none}
+.thumb.has img{display:block}
+.thumb.has span{display:none}
+.zone{
+  position:relative;min-height:155px;border-radius:18px;display:grid;place-items:center;text-align:center;
+  padding:18px;background:rgba(255,255,255,.015);overflow:hidden
+}
+.main .zone{border:1.5px dashed rgba(255,95,191,.72)}
+.corner .zone{border:1.5px dashed rgba(74,167,255,.72)}
+.zone input{position:absolute;inset:0;width:100%;height:100%;opacity:0;z-index:5}
+.zone img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.zone.has img{display:block}
+.zone.has:after{content:"";position:absolute;inset:42% 0 0;background:linear-gradient(transparent,rgba(7,9,26,.94));z-index:1}
+.upload-copy{position:relative;z-index:2;pointer-events:none}
+.icon{
+  width:46px;height:46px;margin:0 auto 8px;border-radius:14px;display:grid;place-items:center;
+  border:1px solid currentColor;font-size:25px
+}
+.main .icon,.main .upload-copy strong{color:#ff79c9}
+.corner .icon,.corner .upload-copy strong{color:#62b4ff}
+.upload-copy strong{display:block;font-size:17px}
+.upload-copy small{display:block;color:#b5bad0;margin-top:4px}
+.filename{margin-top:9px;color:#858ca8;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.helper{margin-top:10px;color:#989fb6;font-size:11px}
+.custom{padding:16px}
+.custom h2{margin:0 0 10px;font-size:19px}
+.setting{display:flex;align-items:center;gap:12px;padding:13px 0;border-top:1px solid rgba(255,255,255,.07)}
+.setting:first-of-type{border-top:0}
+.setting-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.04)}
+.setting-copy{flex:1}
+.setting-copy strong{display:block;font-size:15px}
+.setting-copy span{display:block;font-size:12px;margin-top:3px}
+.setting select{
+  width:165px;max-width:48vw;background:#171b38;color:#fff;border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;padding:10px;font:inherit;font-size:13px
+}
+.consent{display:flex;gap:9px;color:#989eb4;font-size:11px;line-height:1.35;padding:0 2px 12px}
+.generate{
+  width:100%;min-height:58px;border:0;border-radius:17px;color:#fff;font:inherit;font-size:17px;
+  font-weight:900;background:linear-gradient(90deg,#cf55b2,#8269ff 48%,#3aa9ff)
+}
+.generate:disabled{opacity:.42}
+.status{text-align:center;min-height:22px;margin:11px 0;color:#9097ae;font-size:12px}
+.status.error{color:#ff9cac}.status.ok{color:#7ce1ab}
+.privacy{text-align:center;color:#8f78d9;font-size:11px;margin-bottom:18px}
+.result{display:none;margin-bottom:18px}.result.show{display:block}
+.result img{width:100%;display:block;border-radius:20px}
+.result-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.secondary{
+  min-height:48px;border-radius:14px;border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);color:white;font:inherit;font-weight:800
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="kicker">'80s</div>
+    <h1>School Portrait</h1>
+    <p>Create your classic 1987-style double-exposure portrait.</p>
+  </header>
+
+  <section class="card photo main">
+    <div class="head">
+      <div class="step">1</div>
+      <div class="title">
+        <h2>Main Portrait</h2>
+        <p>Your primary photo</p>
+        <span class="tag">Front facing • clear shot</span>
+      </div>
+      <div class="thumb" id="mainThumb"><span>👤</span><img id="mainThumbImg" alt=""></div>
+    </div>
+    <div class="zone" id="mainZone">
+      <img id="mainPreview" alt="">
+      <div class="upload-copy">
+        <div class="icon">＋</div>
+        <strong>Tap to upload</strong>
+        <small>Choose from your iPhone</small>
+      </div>
+      <input id="mainPhoto" type="file" accept="image/*">
+    </div>
+    <div class="filename" id="mainName">No photo selected</div>
+    <div class="helper">Best results with a clear, front-facing portrait</div>
+  </section>
+
+  <section class="card photo corner">
+    <div class="head">
+      <div class="step">2</div>
+      <div class="title">
+        <h2>Expression Portrait</h2>
+        <p>A second photo with a different expression</p>
+        <span class="tag">Any angle is fine</span>
+      </div>
+      <div class="thumb" id="cornerThumb"><span>🙂</span><img id="cornerThumbImg" alt=""></div>
+    </div>
+    <div class="zone" id="cornerZone">
+      <img id="cornerPreview" alt="">
+      <div class="upload-copy">
+        <div class="icon">＋</div>
+        <strong>Tap to upload</strong>
+        <small>Choose from your iPhone</small>
+      </div>
+      <input id="cornerPhoto" type="file" accept="image/*">
+    </div>
+    <div class="filename" id="cornerName">No photo selected</div>
+    <div class="helper">This photo becomes the faded portrait in the corner</div>
+  </section>
+
+  <section class="card custom">
+    <h2>Customize Your Portrait</h2>
+
+    <div class="setting">
+      <div class="setting-icon">🧥</div>
+      <div class="setting-copy">
+        <strong>Blazer</strong>
+        <span style="color:#ff77c8">Add a blazer or skip it</span>
+      </div>
+      <select id="blazerColor">
+        <option value="no blazer">No Blazer</option>
+        <option value="dusty pink" selected>Dusty Pink</option>
+        <option value="charcoal gray">Charcoal Gray</option>
+        <option value="electric blue">Electric Blue</option>
+        <option value="deep purple">Deep Purple</option>
+        <option value="cream white">Cream White</option>
+      </select>
+    </div>
+
+    <div class="setting">
+      <div class="setting-icon">💇</div>
+      <div class="setting-copy">
+        <strong>Hairstyle</strong>
+        <span style="color:#aa7cff">Pick an '80s look or keep natural</span>
+      </div>
+      <select id="hairstyle">
+        <optgroup label="Keep Original">
+          <option value="natural" selected>No Hairstyle Change</option>
+        </optgroup>
+
+        <optgroup label="Women's 80s Styles">
+          <option value="feathered layers">Feathered Layers</option>
+          <option value="soft perm">Soft Perm</option>
+          <option value="big curls">Big Curls</option>
+          <option value="side-swept bangs">Side-Swept Bangs</option>
+          <option value="voluminous blowout">Voluminous Blowout</option>
+          <option value="bob with volume">Bob with Volume</option>
+          <option value="crimped volume">Crimped Volume</option>
+          <option value="high side ponytail">High Side Ponytail</option>
+        </optgroup>
+
+        <optgroup label="Men's 80s Styles">
+          <option value="feathered men's cut">Feathered Men's Cut</option>
+          <option value="classic 80s side part">Classic Side Part</option>
+          <option value="textured mullet">Textured Mullet</option>
+          <option value="short brushed-back volume">Brushed-Back Volume</option>
+          <option value="curly 80s volume">Curly 80s Volume</option>
+          <option value="long rocker layers">Long Rocker Layers</option>
+          <option value="flat-top inspired cut">Flat-Top Inspired</option>
+        </optgroup>
+
+        <optgroup label="Unisex / Androgynous">
+          <option value="shaggy layered cut">Shaggy Layers</option>
+          <option value="short textured crop">Textured Crop</option>
+          <option value="soft shoulder-length layers">Shoulder-Length Layers</option>
+          <option value="sleek 80s bob">Sleek 80s Bob</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="setting">
+      <div class="setting-icon">◱</div>
+      <div class="setting-copy">
+        <strong>Corner Position</strong>
+        <span style="color:#63b7ff">Floating portrait</span>
+      </div>
+      <select id="cornerPosition">
+        <option value="upper left">Upper Left</option>
+        <option value="upper right">Upper Right</option>
+      </select>
+    </div>
+
+    <div class="setting">
+      <div class="setting-icon">☆</div>
+      <div class="setting-copy">
+        <strong>Style Intensity</strong>
+        <span style="color:#aa7cff">How 80s?</span>
+      </div>
+      <select id="intensity">
+        <option value="subtle">Subtle</option>
+        <option value="classic" selected>Classic</option>
+        <option value="extra">Extra</option>
+      </select>
+    </div>
+  </section>
+
+  <label class="consent">
+    <input id="consent" type="checkbox">
+    <span>I have permission to use these photos.</span>
+  </label>
+
+  <button class="generate" id="generateBtn" type="button" disabled>Choose both photos first</button>
+  <div class="status" id="status">Checking server…</div>
+  <div class="privacy">🔒 Your photos are private and never stored by this app.</div>
+
+  <section class="result" id="result">
+    <img id="resultImage" alt="Generated 80s portrait">
+    <div class="result-actions">
+      <button class="secondary" id="shareBtn" type="button">Save / Share</button>
+      <button class="secondary" id="againBtn" type="button">Make Another</button>
+    </div>
+  </section>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let serverReady = false;
+
+function setStatus(message, type = "") {
+  const el = $("status");
+  el.textContent = message;
+  el.className = "status" + (type ? " " + type : "");
+}
+
+function updateGenerate() {
+  const hasMain = $("mainPhoto").files?.length > 0;
+  const hasCorner = $("cornerPhoto").files?.length > 0;
+  const btn = $("generateBtn");
+  btn.disabled = !(hasMain && hasCorner && serverReady);
+  btn.textContent = hasMain && hasCorner ? "Generate My '80s Portrait" : "Choose both photos first";
+}
+
+function setupPhoto(inputId, previewId, thumbId, thumbImgId, zoneId, nameId) {
+  const input = $(inputId);
+
+  const handle = () => {
+    const file = input.files?.[0];
+    if (!file) return;
+
+    $(nameId).textContent = file.name;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      $(previewId).src = e.target.result;
+      $(thumbImgId).src = e.target.result;
+      $(zoneId).classList.add("has");
+      $(thumbId).classList.add("has");
+    };
+    reader.onerror = () => setStatus("Could not preview that photo.", "error");
+    reader.readAsDataURL(file);
+    updateGenerate();
+  };
+
+  input.addEventListener("change", handle);
+  input.addEventListener("input", handle);
+}
+
+setupPhoto("mainPhoto", "mainPreview", "mainThumb", "mainThumbImg", "mainZone", "mainName");
+setupPhoto("cornerPhoto", "cornerPreview", "cornerThumb", "cornerThumbImg", "cornerZone", "cornerName");
+
+async function loadImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error("Photo could not be decoded."));
+      img.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error("Photo could not be read."));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function compressPhoto(file) {
+  const img = await loadImage(file);
+  const maxSide = 1100;
+  const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+  canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+
+  const ctx = canvas.getContext("2d", { alpha: false });
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  return canvas.toDataURL("image/jpeg", 0.68);
+}
+
+async function checkServer() {
+  try {
+    const response = await fetch("/api/health", { cache: "no-store" });
+    const info = await response.json();
+
+    if (!response.ok || !info.ok) throw new Error("Backend unavailable.");
+    if (!info.apiKeyConfigured) {
+      serverReady = false;
+      setStatus("OpenAI API key is missing in Vercel.", "error");
+      updateGenerate();
+      return;
+    }
+
+    serverReady = true;
+    setStatus("Ready to generate.", "ok");
+    updateGenerate();
+  } catch {
+    serverReady = false;
+    setStatus("Backend is not responding.", "error");
+    updateGenerate();
+  }
+}
+
+$("generateBtn").addEventListener("click", async () => {
+  const mainFile = $("mainPhoto").files?.[0];
+  const cornerFile = $("cornerPhoto").files?.[0];
+
+  if (!mainFile || !cornerFile) {
+    setStatus("Choose both photos first.", "error");
+    return;
+  }
+
+  if (!$("consent").checked) {
+    setStatus("Tick the permission box first.", "error");
+    return;
+  }
+
+  if (!serverReady) {
+    setStatus("Server is not ready yet.", "error");
+    return;
+  }
+
+  const btn = $("generateBtn");
+  btn.disabled = true;
+  btn.textContent = "Preparing photos…";
+  $("result").classList.remove("show");
+  setStatus("Preparing your photos…");
+
+  try {
+    const [mainPhoto, cornerPhoto] = await Promise.all([
+      compressPhoto(mainFile),
+      compressPhoto(cornerFile)
+    ]);
+
+    btn.textContent = "Generating portrait…";
+    setStatus("Developing your portrait… this can take about a minute.");
+
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mainPhoto,
+        cornerPhoto,
+        blazerColor: $("blazerColor").value,
+        hairstyle: $("hairstyle").value,
+        cornerPosition: $("cornerPosition").value,
+        intensity: $("intensity").value
+      })
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || `Generation failed (${response.status}).`);
+    if (!data.image) throw new Error("No portrait was returned.");
+
+    $("resultImage").src = data.image;
+    $("result").classList.add("show");
+    setStatus("Portrait ready.", "ok");
+    $("result").scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (error) {
+    setStatus(error.message || "Generation failed.", "error");
+  } finally {
+    btn.textContent = "Generate My '80s Portrait";
+    updateGenerate();
+  }
+});
+
+$("shareBtn").addEventListener("click", async () => {
+  if (!$("resultImage").src) return;
+
+  try {
+    const response = await fetch($("resultImage").src);
+    const blob = await response.blob();
+    const file = new File([blob], "80s-school-portrait.jpg", { type: "image/jpeg" });
+
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ title: "80s School Portrait", files: [file] });
+      return;
+    }
+
+    const a = document.createElement("a");
+    a.href = $("resultImage").src;
+    a.download = "80s-school-portrait.jpg";
+    a.click();
+  } catch {
+    alert("Press and hold the portrait to save it.");
+  }
+});
+
+$("againBtn").addEventListener("click", () => {
+  $("result").classList.remove("show");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+checkServer();
+</script>
+</body>
+</html>
