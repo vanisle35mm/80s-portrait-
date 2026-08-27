@@ -1,76 +1,65 @@
-const prompt = `
+const prompt = '
 Create a photorealistic late-1980s school portrait using BOTH uploaded photos of the SAME person.
 
 PHOTO 1 is the main portrait reference.
 PHOTO 2 is the expression reference for the faded secondary portrait.
 
-Preserve the person's identity very closely:
-- facial structure
-- apparent age
-- skin tone
-- eye color
-- recognizable hairstyle and hair color
-- natural facial proportions
+Preserve the person's identity extremely closely. Maintain the same facial structure, apparent age, skin tone, eye color, hairstyle, hair color, smile, and natural facial proportions. The finished subject should clearly look like the same person in the reference photos.
 
-The final image should look like a real professionally photographed school or department-store studio portrait from approximately 1987–1989, not a modern parody of the 1980s.
+The finished photograph should look like a genuine professionally photographed school or department-store studio portrait from approximately 1987–1989. It should feel authentic and nostalgic, not like a modern parody of the 1980s.
 
 MAIN PORTRAIT:
-- natural, believable school-photo pose
-- ${blazer} late-1980s blazer
-- moderate, realistic shoulder padding
-- blazer should fit naturally and should not look like a costume
+- natural and believable school-photo pose
+- period-correct 1980s blazer with moderate realistic shoulder padding
+- blazer should fit naturally and not look like a costume
 - simple light-colored shirt or blouse underneath
-- natural skin texture
-- realistic eyes, teeth, hair, and facial detail
-- subtle period-appropriate grooming
-- do not make the subject look older or younger than in the reference
+- realistic natural skin texture
+- realistic eyes, teeth, hair, and facial details
+- restrained period-appropriate styling
+- do not make the subject appear older or younger
 
 LIGHTING:
-- realistic soft studio key light
+- realistic soft studio key lighting
 - gentle fill light
-- believable catchlights in the eyes
 - natural shadows around the face and clothing
+- believable eye catchlights
 - subtle vintage photographic softness
-- avoid excessive airbrushing, plastic skin, or artificial glow
+- avoid plastic-looking skin
+- avoid excessive airbrushing
+- avoid excessive glow
 
 BACKGROUND:
 - authentic dark navy, indigo, and muted purple studio backdrop
-- a few soft hot-pink and electric-blue diagonal laser streaks
-- laser beams remain behind the subject and are secondary to the portrait
-- slight studio haze
+- a small number of soft hot-pink and electric-blue diagonal laser streaks
+- laser beams remain behind the subject
+- lasers should support the portrait rather than dominate it
+- subtle atmospheric studio haze
 - restrained late-1980s photo-lab glow
-- no futuristic sci-fi effects
+- no futuristic or science-fiction appearance
 
-SECONDARY / FLOATING PORTRAIT:
-- use PHOTO 2 for the facial expression
-- place it in the ${position}
+SECONDARY FLOATING PORTRAIT:
+- use PHOTO 2 as the expression reference
+- place the secondary portrait in the selected upper corner
 - smaller than the main portrait
 - head-and-shoulders framing
 - semi-transparent double-exposure appearance
 - softly feathered edges
-- lower opacity than the main portrait
+- subtle opacity
 - dreamy but still photographic
-- do not let it overpower the main portrait
+- do not allow it to overpower the main portrait
 
 COMPOSITION:
 - square portrait
 - professionally composed
-- main subject remains dominant
+- main portrait remains dominant
 - realistic camera perspective
-- photorealistic photography, not illustration or digital art
+- authentic photographic appearance
+- no illustration or digital-art appearance
 - no text
 - no logos
-- no watermarks
+- no watermark
 - no exaggerated shoulder pads
 - no exaggerated makeup
 - no caricature
-- no comedy/parody styling
-
-${
-  level === "extra"
-    ? "Increase the 1980s styling moderately: slightly brighter laser accents, a little more studio glow, and slightly stronger period styling, while keeping the result believable and photorealistic."
-    : level === "subtle"
-    ? "Keep the 1980s styling understated: very faint laser lines, minimal shoulder padding, very little haze, and a smaller secondary portrait."
-    : "Use an authentic, tasteful, believable late-1980s school-portrait aesthetic."
-}
+- no comedy or parody styling
 `;
