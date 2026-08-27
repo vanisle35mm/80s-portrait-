@@ -73,6 +73,7 @@ Lighting:
 - avoid plastic skin
 - avoid excessive airbrushing
 - avoid excessive glamour retouching
+- subtle vintage fade to the overall image 
 
 Background:
 - authentic dark navy, indigo, and muted purple studio backdrop
@@ -87,7 +88,7 @@ Background:
 Secondary portrait:
 - place a faded head-and-shoulders portrait in the ${cornerPosition}
 - use IMAGE 2 for the expression
-- make it noticeably smaller and softer than the main portrait
+- make it a bit larger and softer than the main portrait
 - semi-transparent double-exposure appearance
 - softly feathered edges that blend naturally into the background
 - subtle opacity
